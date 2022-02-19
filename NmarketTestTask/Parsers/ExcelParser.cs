@@ -41,19 +41,7 @@ namespace NmarketTestTask.Parsers
                 {
                     if (currentHouse != null)
                     {
-                        var row = cell.WorksheetRow().RowNumber();
-                        var column = cell.WorksheetColumn().ColumnNumber();
-                        if (currentHouse.Flats.Count != 0)
-                        {
-                            currentHouse.Flats.Add(CreateNewFlat(sheet, value, row, column));
-                        }
-                        else
-                        {
-                            currentHouse.Flats = new List<Flat>
-                            {
-                               CreateNewFlat(sheet, value, row, column)
-                            };
-                        }
+                        currentHouse.Flats.Add(CreateNewFlat(sheet, value, cell));
                     }
                     else
                     {
@@ -67,12 +55,14 @@ namespace NmarketTestTask.Parsers
             return houses;
         }
 
-        private static Flat CreateNewFlat(IXLWorksheet sheet, string value, int row, int column)
+        private static Flat CreateNewFlat(IXLWorksheet sheet, string value, IXLCell cell)
         {
             string price;
+            var row = cell.WorksheetRow().RowNumber();
+            var column = cell.WorksheetColumn().ColumnNumber();
             try
             {
-                price = sheet.Cell(row + 1, column).GetValue<string>();
+                price = decimal.Parse(sheet.Cell(row + 1, column).Value.ToString().Replace(" ", "").Replace(".", ",")).ToString();
             }
             catch
             {
