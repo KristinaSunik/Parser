@@ -32,7 +32,7 @@ namespace NmarketTestTask.Parsers
 
                     currentHouse = new House()
                     {
-                        Name = value.Replace("Дом ",""),
+                        Name = value,
                         Flats = new List<Flat>()
                     };
                 }
