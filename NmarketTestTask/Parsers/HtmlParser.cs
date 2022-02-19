@@ -22,9 +22,13 @@ namespace NmarketTestTask.Parsers
             {
                 var housesNodes = line.Elements("td").ToList();
                 var houseFound = houses.FirstOrDefault(x => x.Name == housesNodes.FirstOrDefault(n => n.Attributes.FirstOrDefault(y => y.Name == "class").Value == "house").InnerText);
+                var number = housesNodes.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "number");
+                var price = housesNodes.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "price");
+
                 if (houseFound == null)  
                 {
-                    var newHouse = CreateNewHouse(housesNodes);
+                    var name = housesNodes.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "house");
+                    var newHouse = CreateNewHouse(name, number, price);
                     houses.Add(newHouse);
                 }
                 else //если такой дом уже есть в списке
@@ -32,15 +36,12 @@ namespace NmarketTestTask.Parsers
                     var flatFound = houseFound.Flats.FirstOrDefault(x => x.Number == housesNodes.FirstOrDefault(h => h.Attributes.FirstOrDefault(y => y.Name == "class").Value == "number").InnerText);
                     if (flatFound == null)
                     {
-                        string number = housesNodes.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "number").InnerText;
-                        string price = housesNodes.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "price").InnerText;
-
-                        if (number != "" && price != "")
+                        if (number != null && price != null)
                         {
                             houseFound.Flats.Add(new Flat()
                             {
-                                Number = number,
-                                Price = price
+                                Number = number.InnerText,
+                                Price = price.InnerText
                             });
                         }
                         else
@@ -54,20 +55,30 @@ namespace NmarketTestTask.Parsers
             return houses;
         }
 
-        private static House CreateNewHouse(List<HtmlNode> housesNodes)
+        private static House CreateNewHouse(HtmlNode name, HtmlNode number, HtmlNode price)
         {
-            return new House()
+            House house;
+            try
             {
-                Name = housesNodes.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "house").InnerText,
-                Flats = new List<Flat>
+                house = new House()
                 {
-                    new Flat()
+                    Name = name.InnerText,
+                    Flats = new List<Flat>
                     {
-                        Number = housesNodes.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "number").InnerText,
-                        Price = housesNodes.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "price").InnerText
+                        new Flat()
+                        {
+                            Number = number.InnerText,
+                            Price = price.InnerText
+                        }
                     }
-                }
-            };
+                };
+            }
+            catch
+            {
+                throw new Exception("Не удалось считать со страницы данные о доме");
+            }
+
+            return house;
         }
     }
 }

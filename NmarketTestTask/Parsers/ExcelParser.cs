@@ -32,7 +32,7 @@ namespace NmarketTestTask.Parsers
 
                     currentHouse = new House()
                     {
-                        Name = value,
+                        Name = value.Replace("Дом ",""),
                         Flats = new List<Flat>()
                     };
                 }
@@ -45,33 +45,45 @@ namespace NmarketTestTask.Parsers
                         var column = cell.WorksheetColumn().ColumnNumber();
                         if (currentHouse.Flats.Count != 0)
                         {
-                            currentHouse.Flats.Add(new Flat()
-                            {
-                                Number = value,
-                                Price = sheet.Cell(row + 1, column).GetValue<string>()
-                            });
+                            currentHouse.Flats.Add(CreateNewFlat(sheet, value, row, column));
                         }
                         else
                         {
                             currentHouse.Flats = new List<Flat>
                             {
-                                new Flat()
-                                {
-                                    Number = value,
-                                    Price = sheet.Cell(row + 1, column).GetValue<string>()
-                                }
+                               CreateNewFlat(sheet, value, row, column)
                             };
                         }
                     }
                     else
                     {
-                        throw new Exception("На странице не нашлось имени дома");
+                        throw new Exception("На странице не было найдено имени дома");
                     }
                 }
             }
-            houses.Add(currentHouse);
+
+            houses.Add(currentHouse); //добавляем последний считанный дом
 
             return houses;
+        }
+
+        private static Flat CreateNewFlat(IXLWorksheet sheet, string value, int row, int column)
+        {
+            string price;
+            try
+            {
+                price = sheet.Cell(row + 1, column).GetValue<string>();
+            }
+            catch
+            {
+                throw new Exception("На странице не была найдена цена квартиры");
+            }
+
+            return new Flat()
+            {
+                Number = value.Replace("№", ""),
+                Price = price
+            };
         }
     }
 }
