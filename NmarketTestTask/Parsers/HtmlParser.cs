@@ -20,20 +20,20 @@ namespace NmarketTestTask.Parsers
 
             foreach (var line in nodes)
             {
-                var elements = line.Elements("td").ToList();
-                var houseFound = houses.FirstOrDefault(x => x.Name == elements.FirstOrDefault(n => n.Attributes.FirstOrDefault(y => y.Name == "class").Value == "house").InnerText);
-                if (houseFound == null)
+                var housesNodes = line.Elements("td").ToList();
+                var houseFound = houses.FirstOrDefault(x => x.Name == housesNodes.FirstOrDefault(n => n.Attributes.FirstOrDefault(y => y.Name == "class").Value == "house").InnerText);
+                if (houseFound == null)  
                 {
-                    var currentHouse = CreateNewHouse(elements);
-                    houses.Add(currentHouse);
+                    var newHouse = CreateNewHouse(housesNodes);
+                    houses.Add(newHouse);
                 }
-                else
+                else //если такой дом уже есть в списке
                 {
-                    var flatFound = houseFound.Flats.FirstOrDefault(x => x.Number == elements.FirstOrDefault(h => h.Attributes.FirstOrDefault(y => y.Name == "class").Value == "number").InnerText);
+                    var flatFound = houseFound.Flats.FirstOrDefault(x => x.Number == housesNodes.FirstOrDefault(h => h.Attributes.FirstOrDefault(y => y.Name == "class").Value == "number").InnerText);
                     if (flatFound == null)
                     {
-                        string number = elements.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "number").InnerText;
-                        string price = elements.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "price").InnerText;
+                        string number = housesNodes.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "number").InnerText;
+                        string price = housesNodes.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "price").InnerText;
 
                         if (number != "" && price != "")
                         {
@@ -54,17 +54,17 @@ namespace NmarketTestTask.Parsers
             return houses;
         }
 
-        private static House CreateNewHouse(List<HtmlNode> elements)
+        private static House CreateNewHouse(List<HtmlNode> housesNodes)
         {
             return new House()
             {
-                Name = elements.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "house").InnerText,
+                Name = housesNodes.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "house").InnerText,
                 Flats = new List<Flat>
                 {
                     new Flat()
                     {
-                        Number = elements.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "number").InnerText,
-                        Price = elements.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "price").InnerText
+                        Number = housesNodes.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "number").InnerText,
+                        Price = housesNodes.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "price").InnerText
                     }
                 }
             };
