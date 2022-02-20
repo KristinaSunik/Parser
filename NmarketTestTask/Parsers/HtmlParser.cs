@@ -29,7 +29,7 @@ namespace NmarketTestTask.Parsers
                 {
                     var name = houseNode.Find(x => x.Attributes.FirstOrDefault(y => y.Name == "class").Value == "house");
                     var newHouse = CreateNewHouse(name, number, price);
-                    houses.Add(newHouse);
+                    houses?.Add(newHouse);
                 }
                 else //если такой дом уже есть в списке
                 {
@@ -38,7 +38,7 @@ namespace NmarketTestTask.Parsers
                     {
                         if (number != null && price != null)
                         {
-                            houseFound.Flats.Add(new Flat()
+                            houseFound.Flats?.Add(new Flat()
                             {
                                 Number = number.InnerText,
                                 Price = price.InnerText.Replace(" ", "").Replace(",",".")

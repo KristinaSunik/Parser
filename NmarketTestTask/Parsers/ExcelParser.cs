@@ -41,7 +41,7 @@ namespace NmarketTestTask.Parsers
                 {
                     if (currentHouse != null)
                     {
-                        currentHouse.Flats.Add(CreateNewFlat(sheet, value, cell));
+                        currentHouse.Flats?.Add(CreateNewFlat(sheet, value, cell));
                     }
                     else
                     {
@@ -50,7 +50,7 @@ namespace NmarketTestTask.Parsers
                 }
             }
 
-            houses.Add(currentHouse); //добавляем последний считанный дом
+            houses?.Add(currentHouse); //добавляем последний считанный дом
 
             return houses;
         }
