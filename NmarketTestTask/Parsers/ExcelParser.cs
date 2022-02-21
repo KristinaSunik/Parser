@@ -18,7 +18,7 @@ namespace NmarketTestTask.Parsers
 
             var cellsVal = sheet.Cells().Where(c => c.GetValue<string>() != "").ToList();
 
-            var rows = sheet.Rows();
+
             foreach (var cell in cellsVal)
             {
                 var value = cell.GetValue<string>();
